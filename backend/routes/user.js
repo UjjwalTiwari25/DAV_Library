@@ -97,21 +97,21 @@ router.post("/sign-up", async (req, res) => {
 router.post("/sign-in", async (req, res) => {
     console.log("Signin request body:", req.body);
     try {
-        const { login, password } = req.body;
+        const { username, email, password } = req.body;
 
         // Check for missing fields
-        if (!login || !password) {
+        if ((!username && !email) || !password) {
             return res.status(400).json({
                 success: false,
-                message: "All fields are required"
+                message: "Please enter your username or email along with your password"
             });
         }
 
         // Find user by username or email
         const user = await User.findOne({
             $or: [
-                { username: login },
-                { email: login }
+                { username: username || "" }, 
+                { email: email || "" }
             ]
         });
 
