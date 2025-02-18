@@ -1,41 +1,34 @@
 const mongoose=require('mongoose');
 const user=new mongoose.Schema({
+
     username:{
         type:String,
         required:true,
         unique:true,
     },
+
     email:{
         type:String,
         required:true,
         unique:true,
-        
     },
+
     password:{
         type:String,
         required:true,
     },
-    class:{
-        type:String,
-        required:true,
-    },
-    section:{
-        type:String,
-        required:true,
-    },
-    rollno:{
-        type:Number,
-        required:true,
-    },
+    
     avatar:{
         type:String,
         default:"avatar.png",
     },
+
     role:{
         type:String,
         default:"user",
         enum:["user","admin"],
     },
+    
     favourite_books:[{type:mongoose.Types.ObjectId,
         ref:"Book"},],
 },
