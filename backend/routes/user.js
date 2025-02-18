@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const {authenticateToken}=require("./userAuth");
 
 // Signup Route
 router.post("/sign-up", async (req, res) => {
@@ -95,61 +97,47 @@ router.post("/sign-up", async (req, res) => {
 
 // Sign-in Route
 router.post("/sign-in", async (req, res) => {
-    console.log("Signin request body:", req.body);
-    try {
-        const { username, email, password } = req.body;
+    try{
+        const{username,password}= req.body;
 
-        // Check for missing fields
-        if ((!username && !email) || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "Please enter your username or email along with your password"
-            });
+        const existingUser = await User.findOne({username});
+
+        if(!existingUser){
+            res.status(400).json({message :"Invalid credentials"});
         }
 
-        // Find user by username or email
-        const user = await User.findOne({
-            $or: [
-                { username: username || "" }, 
-                { email: email || "" }
-            ]
+        await bcrypt.compare(password,existingUser.password,(err,data)=>{
+            if(data){
+                const authClaims=[
+                    {name:existingUser.username},
+                    {role:existingUser.role},
+
+                ]
+                const token =jwt.sign({authClaims},"libraryDav123",{expiresIn:"14d"});
+                res.status(200).json({id:existingUser._id , 
+                                      role:existingUser.role, 
+                                      token:token,
+                                    });
+            }
+            else{
+                res.status(400).json({message:"Invalid credentials"});
+            }
         });
-
-        // Check if user exists
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid credentials"
-            });
-        }
-
-        // Verify password
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid credentials"
-            });
-        }
-
-        // Prepare response
-        const userResponse = user.toObject();
-        delete userResponse.password;
-
-        return res.status(200).json({
-            success: true,
-            message: "Sign in successful",
-            user: userResponse
-        });
-
-    } catch (error) {
-        console.error("Sign-in error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal Server Error",
-            error: error.message
-        });
+    }catch(error){
+        res.status(500).json({message:"Internal server error"});
     }
 });
 
+//get user-information
+router.get("/get-user-information",authenticateToken,async(req,res)=>{
+    try{
+        const {id}=req.headers;
+        const data= await User.findById(id).select("-password");
+        return res.status(200).json(data);
+
+    }catch(error){
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
+   
 module.exports = router;
