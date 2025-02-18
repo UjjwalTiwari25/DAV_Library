@@ -1,37 +1,62 @@
 const router = require("express").Router();
-const User = require("../models/user"); // Make sure to import the User model
-const bcrypt = require("bcrypt"); // For password hashing
+const User = require("../models/user");
+const bcrypt = require("bcrypt");
 
-// Signup
+// Signup Route
 router.post("/sign-up", async (req, res) => {
+    console.log("Signup request body:", req.body);
     try {
         const { username, email, password } = req.body;
 
-        // Input validation
+        // Check for missing fields
         if (!username || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" });
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
         }
 
-        // Username validation
+        // Validate username length
         if (username.length < 4) {
-            return res.status(400).json({ message: "Username must be at least 4 characters" });
+            return res.status(400).json({
+                success: false,
+                message: "Username must be at least 4 characters"
+            });
         }
 
-        // Check if username already exists
-        const existingUsername = await User.findOne({ username: username });
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide a valid email address"
+            });
+        }
+
+        // Check existing username
+        const existingUsername = await User.findOne({ username });
         if (existingUsername) {
-            return res.status(400).json({ message: "Username already exists" });
+            return res.status(400).json({
+                success: false,
+                message: "Username already exists"
+            });
         }
 
-        // Check if email already exists
-        const existingEmail = await User.findOne({ email: email });
+        // Check existing email
+        const existingEmail = await User.findOne({ email });
         if (existingEmail) {
-            return res.status(400).json({ message: "Email already exists" });
+            return res.status(400).json({
+                success: false,
+                message: "Email already exists"
+            });
         }
 
-        // Password validation
+        // Validate password length
         if (password.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters" });
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 6 characters"
+            });
         }
 
         // Hash password
@@ -45,14 +70,15 @@ router.post("/sign-up", async (req, res) => {
             password: hashedPassword
         });
 
-        // Save user to database
+        // Save user
         await newUser.save();
 
-        // Remove password from response
+        // Prepare response
         const userResponse = newUser.toObject();
         delete userResponse.password;
 
         return res.status(201).json({
+            success: true,
             message: "User created successfully",
             user: userResponse
         });
@@ -60,6 +86,66 @@ router.post("/sign-up", async (req, res) => {
     } catch (error) {
         console.error("Signup error:", error);
         return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+});
+
+// Sign-in Route
+router.post("/sign-in", async (req, res) => {
+    console.log("Signin request body:", req.body);
+    try {
+        const { login, password } = req.body;
+
+        // Check for missing fields
+        if (!login || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
+        }
+
+        // Find user by username or email
+        const user = await User.findOne({
+            $or: [
+                { username: login },
+                { email: login }
+            ]
+        });
+
+        // Check if user exists
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials"
+            });
+        }
+
+        // Verify password
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials"
+            });
+        }
+
+        // Prepare response
+        const userResponse = user.toObject();
+        delete userResponse.password;
+
+        return res.status(200).json({
+            success: true,
+            message: "Sign in successful",
+            user: userResponse
+        });
+
+    } catch (error) {
+        console.error("Sign-in error:", error);
+        return res.status(500).json({
+            success: false,
             message: "Internal Server Error",
             error: error.message
         });
