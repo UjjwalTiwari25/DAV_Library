@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const app = express();
 const connectDB = require("./connection/conn");
 const userRoutes = require("./routes/user");
+const bookRoutes= require("./routes/book");
 
 // Middleware
 app.use(express.json());
@@ -22,6 +23,7 @@ const startServer = async () => {
 
         // Routes
         app.use("/api/v1", userRoutes);
+        app.use("/api/v1",bookRoutes);
 
         // 404 handler
         app.use((req, res) => {

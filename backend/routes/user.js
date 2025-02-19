@@ -113,7 +113,7 @@ router.post("/sign-in", async (req, res) => {
                     {role:existingUser.role},
 
                 ]
-                const token =jwt.sign({authClaims},"libraryDav123",{expiresIn:"14d"});
+                const token =jwt.sign({authClaims}, process.env.JWT_SECRET ,{expiresIn:"14d"});
                 res.status(200).json({id:existingUser._id , 
                                       role:existingUser.role, 
                                       token:token,
