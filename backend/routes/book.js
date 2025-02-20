@@ -2,6 +2,7 @@
 const router = require("express").Router();
 const User = require("../models/user");
 const Book = require("../models/book");
+
 const { authenticateToken } = require("../middleware/auth"); // Note the path change
 
 // Add book (Admin only)
@@ -153,7 +154,6 @@ router.delete("/delete-book/:id", authenticateToken, async (req, res) => {
     }
 });
 
-
 // Get all books
 router.get("/get-all-books", async (req, res) => {
     try {
@@ -169,5 +169,50 @@ router.get("/get-all-books", async (req, res) => {
         });
     }
 });
+
+//get recently added books limit 4
+router.get("/get-recent-books", async (req, res) => {
+    try {
+        const books = await Book.find().sort({createdAt :-1}).limit(4);
+        return res.json({
+            status: "Success",
+            data: books,
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            message: "Error fetching books", 
+            error: error.message 
+        });
+    }
+});
+
+// Get book details by ID
+router.get("/get-book-by-id/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const book = await Book.findById(id);
+
+        if (!book) {
+            return res.status(404).json({
+                status: "Error",
+                message: "Book not found",
+            });
+        }
+
+        return res.json({
+            status: "Success",
+            data: book,
+        });
+
+    } catch (error) {
+        console.error("Error fetching book:", error);
+        res.status(500).json({ 
+            message: "Error fetching book", 
+            error: error.message 
+        });
+    }
+});
+
 
 module.exports = router;
