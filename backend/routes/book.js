@@ -155,10 +155,13 @@ router.delete("/delete-book/:id", authenticateToken, async (req, res) => {
 
 
 // Get all books
-router.get("/", async (req, res) => {
+router.get("/get-all-books", async (req, res) => {
     try {
-        const books = await Book.find().populate('addedBy', 'name email');
-        res.json(books);
+        const books = await Book.find().sort({createdAt :-1});
+        return res.json({
+            status: "Success",
+            data: books,
+        });
     } catch (error) {
         res.status(500).json({ 
             message: "Error fetching books", 
