@@ -31,6 +31,20 @@ const user=new mongoose.Schema({
     
     favourites:[{type:mongoose.Types.ObjectId,
         ref:"Book"}],
+
+    cart :[
+        {
+            type:mongoose.Types.ObjectId,
+            ref: "books",
+        },
+    ],
+
+    order:[
+        {
+            
+        }
+    ]
+        
 },
 
 {timestamps:true}

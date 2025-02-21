@@ -9,7 +9,7 @@ const connectDB = require("./connection/conn");
 const userRoutes = require("./routes/user");
 const bookRoutes = require("./routes/book");
 const favouriteRoutes = require("./routes/favourite");
-
+const cartRoutes =require("./routes/cart");
 
 
 
@@ -28,6 +28,8 @@ app.use(morgan("dev"));
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", bookRoutes);
 app.use("/api/v1", favouriteRoutes);
+app.use("/api/v1", cartRoutes);
+
 
 // 404 Handler
 app.use((req, res) => {
