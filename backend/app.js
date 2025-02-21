@@ -8,6 +8,10 @@ const app = express();
 const connectDB = require("./connection/conn");
 const userRoutes = require("./routes/user");
 const bookRoutes = require("./routes/book");
+const favouriteRoutes = require("./routes/favourite");
+
+
+
 
 // Security Middleware
 app.use(helmet());
@@ -23,6 +27,7 @@ app.use(morgan("dev"));
 // API Routes
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", bookRoutes);
+app.use("/api/v1", favouriteRoutes);
 
 // 404 Handler
 app.use((req, res) => {
