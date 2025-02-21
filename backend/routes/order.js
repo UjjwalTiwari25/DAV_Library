@@ -25,7 +25,7 @@ router.post("/place-order", authenticateToken, async (req, res) => {
             success: Success,
             message: "Order placed successfully",
         });
-        
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({message: "Internal Server Error"});
