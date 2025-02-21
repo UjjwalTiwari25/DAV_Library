@@ -29,9 +29,11 @@ const user=new mongoose.Schema({
         enum:["user","admin"],
     },
     
-    favourite_books:[{type:mongoose.Types.ObjectId,
-        ref:"Book"},],
+    favourites:[{type:mongoose.Types.ObjectId,
+        ref:"Book"}],
 },
+
 {timestamps:true}
+
 );
 module.exports=mongoose.model("user",user);
