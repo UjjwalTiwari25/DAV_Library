@@ -10,6 +10,8 @@ const userRoutes = require("./routes/user");
 const bookRoutes = require("./routes/book");
 const favouriteRoutes = require("./routes/favourite");
 const cartRoutes =require("./routes/cart");
+const orderRoutes =require("./routes/order");
+
 
 
 
@@ -29,6 +31,8 @@ app.use("/api/v1", userRoutes);
 app.use("/api/v1", bookRoutes);
 app.use("/api/v1", favouriteRoutes);
 app.use("/api/v1", cartRoutes);
+app.use("/api/v1", orderRoutes);
+
 
 
 // 404 Handler
