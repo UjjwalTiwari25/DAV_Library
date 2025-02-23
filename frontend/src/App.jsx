@@ -7,11 +7,13 @@ import Footer from './components/Footer/Footer';
 
 const App = () => {
   return (
-    <div>
-      <Home/>
-      <Navbar/>
-      <Footer/>
-      
+    <div className="min-h-screen flex flex-col bg-site-dark text-white">
+      <Navbar />
+      <main className="flex-grow">
+        <Home />
+        <Card/>
+      </main>
+      <Footer />
     </div>
   )
 }
