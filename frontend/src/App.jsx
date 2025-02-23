@@ -11,7 +11,6 @@ const App = () => {
       <Navbar />
       <main className="flex-grow">
         <Home />
-        <Card/>
       </main>
       <Footer />
     </div>
