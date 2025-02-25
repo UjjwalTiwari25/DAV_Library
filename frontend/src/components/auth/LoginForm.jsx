@@ -26,9 +26,12 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
+      console.log('Attempting to login with credentials:', credentials);
       await login(credentials.username, credentials.password);
+      console.log('Login successful, navigating to home page');
       navigate('/'); // Redirect to home page after successful login
     } catch (err) {
+      console.error('Login failed:', err);
       setError(err.message || 'Failed to login. Please try again.');
     } finally {
       setIsLoading(false);
