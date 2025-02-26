@@ -45,7 +45,7 @@ const Hero = () => {
       {/* Left Side - Text Content */}
       <div className="w-full md:w-1/2 text-center md:text-left space-y-6">
         <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight"
+          className="text-4xl sm:text-6xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}

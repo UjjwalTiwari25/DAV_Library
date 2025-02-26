@@ -47,9 +47,9 @@ const Footer = () => {
                 
                 {/* Column 2: Contact Section */}
                 <div className="space-y-3">
-                    <h3 className="text-xl font-semibold text-blue-500">📞 CONTACT US</h3>
-                    <p className="text-white-300 font-semibold">8102382109</p>
-                    <h3 className="text-xl font-semibold text-blue-500 mt-4">📍 ADDRESS</h3>
+                    <h3 className="text-xl font-semibold text-blue-500">CONTACT US</h3>
+                    <p className="text-white-300 font-semibold">📞 8102382109</p>
+                    <h3 className="text-xl font-semibold text-blue-500 mt-4">ADDRESS 📍 </h3>
                     <p className="text-white-300 font-semibold">DAV Ispat Public School, Sector 8/B<br /> Bokaro Steel City, Jharkhand - 827009</p>
                 </div>
 
@@ -67,7 +67,7 @@ const Footer = () => {
 
                 {/* Column 4: Location */}
                 <div className="space-y-3">
-                    <h3 className="text-xl font-semibold text-blue-500">📍 LOCATION</h3>
+                    <h3 className="text-xl font-semibold text-blue-500">📍LOCATION</h3>
                     <iframe 
                             title="Google Map"
                             src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d17202.975685389647!2d86.165471!3d23.685635!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f42300123789b9%3A0x20cba9de33f2aab3!2sDAV%20ISPAT%20PUBLIC%20SCHOOL%208%2FB!5e1!3m2!1sen!2sin!4v1740396094663!5m2!1sen!2sin" className="w-full h-28 rounded-md border border-gray-600 shadow-md" loading="lazy" allowFullScreen></iframe>

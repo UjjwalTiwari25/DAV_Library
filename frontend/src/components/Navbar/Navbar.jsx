@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 import DAV from '../../assets/DAV.png';
-import Sail from '../../assets/Sail.jpeg';
+import Sail from '../../assets/Sail.png';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
