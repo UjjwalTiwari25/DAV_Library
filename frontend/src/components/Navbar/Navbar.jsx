@@ -22,7 +22,7 @@ const Navbar = () => {
                     <img className="h-10 md:h-12 me-2 drop-shadow-lg" src={Sail} alt="Sail Logo" />
                     <img className="h-10 md:h-12 me-2 drop-shadow-lg" src={DAV} alt="Dav Logo" />
                     <h1 className="text-lg md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-400 drop-shadow-lg">
-                        DAV ISPAT PUBLIC SCHOOL, SECTOR 8/B, BOKARO 
+                        DAV ISPAT PUBLIC SCHOOL
                     </h1>
                 </Link>
 
