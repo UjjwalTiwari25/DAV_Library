@@ -174,10 +174,20 @@ router.delete("/delete-book/:id", authenticateToken, async (req, res) => {
     }
 });
 
-// Get all books
+// Get all books (with optional category filter)
 router.get("/get-all-books", async (req, res) => {
     try {
-        const books = await Book.find().sort({ createdAt: -1 });
+        const { category } = req.query;
+
+        // Build the filter object
+        const filter = {};
+        if (category) {
+            filter.category = category; // Add category to filter if provided
+        }
+
+        // Fetch books with optional filtering
+        const books = await Book.find(filter).sort({ createdAt: -1 });
+
         return res.status(200).json({
             status: "Success",
             data: books,
