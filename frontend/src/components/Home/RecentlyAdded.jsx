@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import BookCard from "../BookCard/BookCard"; // Ensure this is the correct import path
+import Loader from "../Loader/Loader"; // Ensure this is the correct import path
 
 const RecentlyAdded = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([]); // State to store book data
+  const [loading, setLoading] = useState(true); // State to track loading status
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,6 +16,8 @@ const RecentlyAdded = () => {
         setData(response.data.data); // Store fetched data in state
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching (whether successful or not)
       }
     };
     fetchData();
@@ -25,15 +29,25 @@ const RecentlyAdded = () => {
         <h4 className="text-xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight">
           Recently Added Books
         </h4>
-        <div className="my-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {data.length > 0 ? (
-            data.map((book, i) => (
-              <div key={i}>
-                <BookCard data={book} />
-              </div>
-            ))
+        <div className="my-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-24">
+          {/* Display loader while fetching data */}
+          {loading ? (
+            <div className="flex items-center justify-center my-8">
+              <Loader />
+            </div>
           ) : (
-            <p className="text-gray-400">No books available</p>
+            <>
+              {/* Display books if data is available */}
+              {data.length > 0 ? (
+                data.map((book, i) => (
+                  <div key={i}>
+                    <BookCard data={book} />
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400">No books available</p>
+              )}
+            </>
           )}
         </div>
       </div>

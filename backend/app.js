@@ -1,19 +1,17 @@
-// app.js
+// app.js (CommonJS)
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const app = express();
 const connectDB = require("./connection/conn");
 const userRoutes = require("./routes/user");
 const bookRoutes = require("./routes/book");
 const favouriteRoutes = require("./routes/favourite");
-const cartRoutes =require("./routes/cart");
-const orderRoutes =require("./routes/order");
+const cartRoutes = require("./routes/cart");
+const orderRoutes = require("./routes/order");
 
-
-
+const app = express();
 
 // Security Middleware
 app.use(helmet());
@@ -32,8 +30,6 @@ app.use("/api/v1", bookRoutes);
 app.use("/api/v1", favouriteRoutes);
 app.use("/api/v1", cartRoutes);
 app.use("/api/v1", orderRoutes);
-
-
 
 // 404 Handler
 app.use((req, res) => {

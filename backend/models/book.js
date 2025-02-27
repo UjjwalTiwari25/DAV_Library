@@ -15,13 +15,17 @@ const book=new mongoose.Schema({
         required:true,
     },
 
-    description:{
+    category:{
         type:String,
         required:true,
     },
 
     language:{
         type:String,
+        required:true,
+    },
+    available:{
+        type:Boolean,
         required:true,
     },
   },
