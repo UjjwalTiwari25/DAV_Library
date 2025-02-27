@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserIcon, EnvelopeIcon, LockClosedIcon, IdentificationIcon } from '@heroicons/react/24/outline';
-import axios from 'axios'; // Make sure axios is installed
+import axios from 'axios';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -9,17 +9,13 @@ const SignUp = () => {
         name: '',
         username: '',
         email: '',
-        password: '',
-        confirmPassword: ''
+        password: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
     };
 
@@ -27,62 +23,45 @@ const SignUp = () => {
         e.preventDefault();
         setError('');
 
-        // Frontend validation
-        if (!formData.name || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
-            setError('Please fill in all fields');
+        if (!formData.name || !formData.username || !formData.email || !formData.password) {
+            setError('Please fill in all fields.');
             return;
         }
 
         if (formData.name.length < 2) {
-            setError('Name must be at least 2 characters');
+            setError('Name must be at least 2 characters.');
             return;
         }
 
         if (formData.username.length < 4) {
-            setError('Username must be at least 4 characters');
-            return;
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match');
+            setError('Username must be at least 4 characters.');
             return;
         }
 
         if (formData.password.length < 6) {
-            setError('Password must be at least 6 characters');
+            setError('Password must be at least 6 characters.');
             return;
         }
 
-        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
-            setError('Invalid email format');
+            setError('Invalid email format.');
             return;
         }
 
         try {
             setLoading(true);
-            
-            // Call the backend API
-            const response = await axios.post('/api/users/sign-up', {
-                name: formData.name,
-                username: formData.username,
-                email: formData.email,
-                password: formData.password
-            });
+            const response = await axios.post('http://localhost:3000/api/v1/sign-up', formData); // CORRECTED URL
 
             if (response.data.success) {
-                // Registration successful, redirect to login
                 navigate('/login');
             } else {
-                setError(response.data.message || 'Registration failed');
+                setError(response.data.message || 'Registration failed.');
             }
-        } catch (error) {
-            console.error('Signup error:', error);
-            setError(
-                error.response?.data?.message || 
-                'Failed to create account. Please try again.'
-            );
+        } catch (err) {
+            const message = err.response?.data?.message || 'Failed to create account. Please try again.';
+            setError(message);
+            console.error('Signup error:', err);
         } finally {
             setLoading(false);
         }
@@ -90,8 +69,8 @@ const SignUp = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+
             <div className="max-w-md w-full space-y-8">
-                {/* Header Section */}
                 <div className="text-center">
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
@@ -106,11 +85,8 @@ const SignUp = () => {
                     <p className="mt-1 text-gray-400">Join Our DAV ISPAT Library Today</p>
                 </div>
 
-                {/* Form Section */}
                 <div className="relative">
-                    {/* Glow effect */}
                     <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-25"></div>
-                    
                     <div className="relative bg-gray-800 rounded-lg p-8 shadow-xl border border-gray-700">
                         <form className="space-y-6" onSubmit={handleSubmit}>
                             {error && (
@@ -150,7 +126,7 @@ const SignUp = () => {
                                         type="text"
                                         required
                                         className="pl-10 w-full px-4 py-2.5 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                        placeholder="e.g. virat_18 (min. 6 characters)"
+                                        placeholder="e.g. virat_18 (min. 4 characters)"
                                         value={formData.username}
                                         onChange={handleChange}
                                     />
@@ -195,31 +171,11 @@ const SignUp = () => {
                                 </div>
                             </div>
 
-                            <div>
-                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Confirm Password
-                                </label>
-                                <div className="relative">
-                                    <LockClosedIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                    <input
-                                        id="confirmPassword"
-                                        name="confirmPassword"
-                                        type="password"
-                                        required
-                                        className="pl-10 w-full px-4 py-2.5 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                        placeholder="Confirm your password"
-                                        value={formData.confirmPassword}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ${
-                                    loading ? 'opacity-50 cursor-not-allowed' : 'transform hover:scale-[1.02]'
-                                }`}
+                                className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : 'transform hover:scale-[1.02]'
+                                    }`}
                             >
                                 {loading ? (
                                     <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -232,7 +188,6 @@ const SignUp = () => {
                     </div>
                 </div>
 
-                {/* Footer Section */}
                 <div className="text-center">
                     <p className="text-sm text-gray-400">
                         Already have an account?{' '}

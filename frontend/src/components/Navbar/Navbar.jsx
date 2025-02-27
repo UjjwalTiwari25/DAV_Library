@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiMenu, FiX } from 'react-icons/fi';
 import DAV from '../../assets/DAV.png';
 import Sail from '../../assets/Sail.png';
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +14,11 @@ const Navbar = () => {
         { title: "MyFavorite Books", link: "/favorite-books" },
         { title: "Profile", link: "/profile" },
     ];
+    const isLoogedIn = useSelector((state) => state.auth.isLoogedIn);
+    if(isLoogedIn ===false){
+        links.splice(2,2);
+    }
+    
 
     return (
         <nav className="backdrop-blur-md bg-gradient-to-r from-[#141e30] to-[#243b55] fixed top-0 left-0 right-0 z-50 border-b border-white/10 shadow-lg">

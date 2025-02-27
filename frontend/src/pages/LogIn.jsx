@@ -1,23 +1,19 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserIcon, EnvelopeIcon, LockClosedIcon, IdentificationIcon } from '@heroicons/react/24/outline';
-import axios from 'axios'; // Make sure axios is installed
+import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import axios from 'axios';
 
 const LogIn = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
-        password: '',
-        confirmPassword: ''
+        password: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
         setError('');
     };
 
@@ -25,61 +21,25 @@ const LogIn = () => {
         e.preventDefault();
         setError('');
 
-        // Frontend validation
-        if (!formData.email || !formData.password || !formData.confirmPassword) {
-            setError('Please fill in all fields');
-            return;
-        }
-
-        if (formData.name.length < 2) {
-            setError('Name must be at least 2 characters');
-            return;
-        }
-
-        if (formData.username.length < 4) {
-            setError('Username must be at least 4 characters');
-            return;
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }
-
-        if (formData.password.length < 6) {
-            setError('Password must be at least 6 characters');
-            return;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-            setError('Invalid email format');
+        if (!formData.email || !formData.password) {
+            setError('Please fill in all fields.');
             return;
         }
 
         try {
             setLoading(true);
-            
-            // Call the backend API
-            const response = await axios.post('/api/users/sign-in', {
+            const response = await axios.post('http://localhost:3000/api/v1/sign-in', formData); // CORRECTED URL
 
-                email: formData.email,
-                password: formData.password
-            });
-
-            if (response.data.success) {
-                // Registration successful, redirect to login
-                navigate('/login');
+            if (response.data.token) { // Check for token in response (based on your backend)
+                localStorage.setItem('token', response.data.token); // Store token
+                navigate('/dashboard'); // Or wherever you want to redirect after login
             } else {
-                setError(response.data.message || 'Registration failed');
+                setError(response.data.message || 'Login failed.');
             }
-        } catch (error) {
-            console.error('Signup error:', error);
-            setError(
-                error.response?.data?.message || 
-                'Failed to create account. Please try again.'
-            );
+        } catch (err) {
+            const message = err.response?.data?.message || 'Failed to log in. Please try again.';
+            setError(message);
+            console.error('Login error:', err);
         } finally {
             setLoading(false);
         }
@@ -88,7 +48,6 @@ const LogIn = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
-                {/* Header Section */}
                 <div className="text-center">
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
@@ -96,18 +55,15 @@ const LogIn = () => {
                         </div>
                         <div className="relative flex justify-center text-sm">
                             <h2 className="px-4 text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                                Welcome Back , LogIn
+                                Log In
                             </h2>
                         </div>
                     </div>
-                    <p className="mt-1 text-gray-400">Join Our DAV ISPAT Library Today</p>
+                    <p className="mt-1 text-gray-400">Welcome Back to DAV ISPAT Library</p>
                 </div>
 
-                {/* Form Section */}
                 <div className="relative">
-                    {/* Glow effect */}
                     <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-25"></div>
-                    
                     <div className="relative bg-gray-800 rounded-lg p-8 shadow-xl border border-gray-700">
                         <form className="space-y-6" onSubmit={handleSubmit}>
                             {error && (
@@ -115,7 +71,6 @@ const LogIn = () => {
                                     {error}
                                 </div>
                             )}
-                               
 
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
@@ -148,27 +103,8 @@ const LogIn = () => {
                                         type="password"
                                         required
                                         className="pl-10 w-full px-4 py-2.5 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                        placeholder="Create a password (min. 6 characters)"
+                                        placeholder="Enter your password"
                                         value={formData.password}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Confirm Password
-                                </label>
-                                <div className="relative">
-                                    <LockClosedIcon className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                    <input
-                                        id="confirmPassword"
-                                        name="confirmPassword"
-                                        type="password"
-                                        required
-                                        className="pl-10 w-full px-4 py-2.5 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                        placeholder="Confirm your password"
-                                        value={formData.confirmPassword}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -177,27 +113,25 @@ const LogIn = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ${
-                                    loading ? 'opacity-50 cursor-not-allowed' : 'transform hover:scale-[1.02]'
-                                }`}
+                                className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : 'transform hover:scale-[1.02]'
+                                    }`}
                             >
                                 {loading ? (
                                     <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                ) : 'LogIn'}
+                                ) : 'Log In'}
                             </button>
                         </form>
                     </div>
                 </div>
 
-                {/* Footer Section */}
                 <div className="text-center">
                     <p className="text-sm text-gray-400">
                         Don't have an account?{' '}
                         <Link to="/signUp" className="font-medium text-blue-400 hover:text-blue-300 transition-colors duration-200">
-                            SignUp
+                            Sign up
                         </Link>
                     </p>
                 </div>
@@ -207,3 +141,4 @@ const LogIn = () => {
 };
 
 export default LogIn;
+
