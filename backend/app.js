@@ -16,7 +16,13 @@ const app = express();
 
 // Security Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://your-vercel-domain.vercel.app',
+    'http://localhost:5173'
+  ],
+  credentials: true
+}));
 
 // Parsing Middleware
 app.use(express.json());
