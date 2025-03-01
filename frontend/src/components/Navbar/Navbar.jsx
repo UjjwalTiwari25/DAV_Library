@@ -58,23 +58,23 @@ const Navbar = () => {
 
     return (
         <nav className="backdrop-blur-md bg-gradient-to-r from-[#141e30] to-[#243b55] fixed top-0 left-0 right-0 z-50 border-b border-white/10 shadow-lg">
-            <div className="flex justify-between items-center px-6 md:px-8 py-4">
+            <div className="flex justify-between items-center px-6 md:px-8 py-2 md:py-3">
                 {/* Logo & Title */}
                 <Link to="/" className="flex items-center">
-                    <img className="h-10 md:h-12 me-2 drop-shadow-lg" src={Sail} alt="Sail Logo" />
-                    <img className="h-10 md:h-12 me-2 drop-shadow-lg" src={DAV} alt="Dav Logo" />
-                    <h1 className="text-lg md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-400 drop-shadow-lg">
+                    <img className="h-8 md:h-10 me-2 drop-shadow-lg" src={Sail} alt="Sail Logo" />
+                    <img className="h-8 md:h-10 me-2 drop-shadow-lg" src={DAV} alt="Dav Logo" />
+                    <h1 className="text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-400 drop-shadow-lg">
                         DAV ISPAT PUBLIC SCHOOL
                     </h1>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-6">
+                <div className="hidden md:flex items-center gap-5">
                     {links.map((item, i) => (
                         <Link 
                             key={i} 
                             to={item.link} 
-                            className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-110 transition-all duration-300 hover:text-white hover:drop-shadow-lg"
+                            className="text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-110 transition-all duration-300 hover:text-white hover:drop-shadow-lg"
                         >
                             {item.title}
                         </Link>
@@ -82,16 +82,16 @@ const Navbar = () => {
                     ))}
                     {/* Authentication Buttons */}
                     {isLoogedIn === false ? (
-                        <div className="flex gap-4">
+                        <div className="flex gap-3">
                             <Link 
                                 to="/LogIn" 
-                                className="px-4 py-2 border border-blue-400 rounded-lg bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-105 transition-all duration-300 text-white text-lg font-semibold shadow-lg"
+                                className="px-3 py-1.5 border border-blue-400 rounded-lg bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-105 transition-all duration-300 text-white text-base font-semibold shadow-lg"
                             >
                                 LogIn
                             </Link>
                             <Link 
                                 to="/SignUp" 
-                                className="px-4 py-2 border border-blue-400 rounded-lg bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-105 transition-all duration-300 text-white text-lg font-semibold shadow-lg"
+                                className="px-3 py-1.5 border border-blue-400 rounded-lg bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-105 transition-all duration-300 text-white text-base font-semibold shadow-lg"
                             >
                                 SignUp
                             </Link>
@@ -99,7 +99,7 @@ const Navbar = () => {
                     ) : (
                         <button 
                             onClick={handleLogout}
-                            className="px-4 py-2 border border-blue-400 rounded-lg bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-105 transition-all duration-300 text-white text-lg font-semibold shadow-lg"
+                            className="px-3 py-1.5 border border-blue-400 rounded-lg bg-gradient-to-r from-blue-600 to-purple-400 hover:scale-105 transition-all duration-300 text-white text-base font-semibold shadow-lg"
                         >
                             Logout
                         </button>
@@ -120,7 +120,7 @@ const Navbar = () => {
             {isOpen && (
                 <div 
                     ref={menuRef}
-                    className="mobile-menu md:hidden absolute top-16 right-4 w-48 bg-gray-900/95 backdrop-blur-md p-4 rounded-lg shadow-xl border border-gray-700 z-50"
+                    className="mobile-menu md:hidden absolute top-14 right-4 w-48 bg-gray-900/95 backdrop-blur-md p-4 rounded-lg shadow-xl border border-gray-700 z-50"
                 >
                     <div className="flex flex-col items-start gap-3 py-2">
                         {links.map((item, i) => (

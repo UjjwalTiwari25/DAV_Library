@@ -27,20 +27,22 @@ const TypingText = () => {
   }, [index]);
 
   return (
-    <motion.p
-      className="text-lg sm:text-xl md:text-2xl font-medium text-gray-300 leading-relaxed text-center md:text-left"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      {displayedText}|
-    </motion.p>
+    <div className="h-24 sm:h-28 md:h-32">
+      <motion.p
+        className="text-lg sm:text-xl md:text-2xl font-medium text-gray-300 leading-relaxed text-center md:text-left"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        {displayedText}|
+      </motion.p>
+    </div>
   );
 };
 
 const Hero = () => {
   return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-10 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white">
+    <div className="py-24 md:py-20 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white">
       
       {/* Left Side - Text Content */}
       <div className="w-full md:w-1/2 text-center md:text-left space-y-6">
@@ -59,12 +61,12 @@ const Hero = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
           className="flex justify-center md:justify-start"
         >
           <Link
             to="/all-books"
-            className="inline-block px-6 py-3 mt-6 bg-gradient-to-r from-blue-600 to-purple-400 text-white text-lg font-semibold rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
+            className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-400 text-white text-lg font-semibold rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
           >
             Explore Now
           </Link>
@@ -80,7 +82,7 @@ const Hero = () => {
       >
         <motion.div
           animate={{
-                    y: [0, -12, 0],  // Moves up and down slightly
+            y: [0, -12, 0],  // Moves up and down slightly
             scale: [1, 1.1, 1],  // Grows bigger and shrinks back
           }}
           transition={{
@@ -90,11 +92,10 @@ const Hero = () => {
           }}
         >
           <BookOpenIcon
-            className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 drop-shadow-lg"
+            className="w-32 h-32 sm:w-40 sm:h-40 md:w-56 md:h-56 drop-shadow-lg"
             style={{ fill: 'url(#bookIconGradient)' }}
           />
         </motion.div>
-
 
         <svg width="0" height="0">
           <linearGradient id="bookIconGradient" x1="0%" y1="0%" x2="100%" y2="100%">

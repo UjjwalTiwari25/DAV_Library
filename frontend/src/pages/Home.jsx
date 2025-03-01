@@ -5,7 +5,7 @@ import RecentlyAdded from '../components/Home/RecentlyAdded';
 const Home = () => {
   return (
     <div className="bg-zinc-900 text-white min-h-screen flex flex-col">
-    <div className="flex-grow">
+      <div className="flex-grow">
         <Hero />
         <RecentlyAdded />
       </div>

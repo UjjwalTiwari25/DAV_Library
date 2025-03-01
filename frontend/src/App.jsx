@@ -16,6 +16,7 @@ import ManageBooks from './pages/ManageBooks';
 import { useSelector, useDispatch } from 'react-redux'; // Import useSelector
 import { authActions } from './store/auth';
 import { Toaster } from 'react-hot-toast';
+import axios from 'axios';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,10 @@ const App = () => {
       dispatch(authActions.login());
       dispatch(authActions.changeRole(localStorage.getItem("role")));
     }
+    
+    // Increment visitor counter on every page load/refresh
+    const visitorCount = parseInt(localStorage.getItem('visitorCount') || '0');
+    localStorage.setItem('visitorCount', (visitorCount + 1).toString());
   }, []);
 
   return (
