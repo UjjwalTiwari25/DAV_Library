@@ -4,13 +4,3 @@
 body {
     background: linear-gradient(to bottom right, rgba(79, 127, 255, 0.1), rgba(139, 92, 246, 0.1));
   }
-
-/* Add these styles to your index.css or a similar global stylesheet */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
-}

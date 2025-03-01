@@ -83,26 +83,25 @@ const AdminAddBooks = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] pt-16 sm:pt-20 px-4">
+        <div className="min-h-screen bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] pt-20 px-4">
+            {/* Back Button */}
             <button
                 onClick={() => navigate('/profile')}
-                className="fixed top-16 sm:top-20 left-4 p-2 flex items-center text-white hover:text-blue-400 transition-all duration-300 text-sm sm:text-base"
+                className="fixed top-20 left-4 md:left-8 p-2 flex items-center text-white hover:text-blue-400 transition-all duration-300"
             >
-                <FiArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                <FiArrowLeft className="w-6 h-6 mr-2" />
                 Back to Profile
             </button>
 
-            <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-md p-4 sm:p-6 md:p-8 rounded-lg shadow-lg">
-                <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400">
+            <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg">
+                <h2 className="text-3xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400">
                     Add New Book
                 </h2>
                 
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                    {/* Form fields with responsive styling */}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Book Cover Image URL */}
                     <div>
-                        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-1 sm:mb-2">
-                            Book Cover Image URL
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300">Book Cover Image URL</label>
                         <input
                             type="text"
                             name="url"
@@ -110,51 +109,45 @@ const AdminAddBooks = () => {
                             onChange={handleInputChange}
                             required
                             placeholder="Enter image URL"
-                            className="w-full p-2 sm:p-3 bg-white/10 border border-gray-600 rounded-md text-white placeholder-gray-400 text-sm sm:text-base"
+                            className="mt-1 block w-full p-2 bg-white/10 border border-gray-600 rounded-md text-white placeholder-gray-400"
                         />
                     </div>
 
                     {/* Book Title */}
                     <div>
-                        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-1 sm:mb-2">
-                            Book Title
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300">Book Title</label>
                         <input
                             type="text"
                             name="title"
                             value={bookData.title}
                             onChange={handleInputChange}
                             required
-                            className="w-full p-2 sm:p-3 bg-white/10 border border-gray-600 rounded-md text-white placeholder-gray-400 text-sm sm:text-base"
+                            className="mt-1 block w-full p-2 bg-white/10 border border-gray-600 rounded-md text-white placeholder-gray-400"
                         />
                     </div>
 
                     {/* Author */}
                     <div>
-                        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-1 sm:mb-2">
-                            Author
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300">Author</label>
                         <input
                             type="text"
                             name="author"
                             value={bookData.author}
                             onChange={handleInputChange}
                             required
-                            className="w-full p-2 sm:p-3 bg-white/10 border border-gray-600 rounded-md text-white placeholder-gray-400 text-sm sm:text-base"
+                            className="mt-1 block w-full p-2 bg-white/10 border border-gray-600 rounded-md text-white placeholder-gray-400"
                         />
                     </div>
 
                     {/* Category Dropdown */}
                     <div>
-                        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-1 sm:mb-2">
-                            Category
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300">Category</label>
                         <select
                             name="category"
                             value={bookData.category}
                             onChange={handleInputChange}
                             required
-                            className="w-full p-2 sm:p-3 bg-[#1e293b] border border-gray-600 rounded-md text-white [&>option]:bg-[#1e293b] [&>option]:text-white text-sm sm:text-base"
+                            className="mt-1 block w-full p-2 bg-[#1e293b] border border-gray-600 rounded-md text-white [&>option]:bg-[#1e293b] [&>option]:text-white"
                         >
                             <option value="" className="bg-[#1e293b] text-gray-400">Select Category</option>
                             {categories.map((category, index) => (
@@ -171,15 +164,13 @@ const AdminAddBooks = () => {
 
                     {/* Language Dropdown */}
                     <div>
-                        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-1 sm:mb-2">
-                            Language
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300">Language</label>
                         <select
                             name="language"
                             value={bookData.language}
                             onChange={handleInputChange}
                             required
-                            className="w-full p-2 sm:p-3 bg-[#1e293b] border border-gray-600 rounded-md text-white [&>option]:bg-[#1e293b] [&>option]:text-white text-sm sm:text-base"
+                            className="mt-1 block w-full p-2 bg-[#1e293b] border border-gray-600 rounded-md text-white [&>option]:bg-[#1e293b] [&>option]:text-white"
                         >
                             <option value="" className="bg-[#1e293b] text-gray-400">Select Language</option>
                             {languages.map((language, index) => (
@@ -196,9 +187,7 @@ const AdminAddBooks = () => {
 
                     {/* Availability Toggle */}
                     <div className="space-y-2">
-                        <label className="block text-sm sm:text-base font-medium text-gray-300 mb-1 sm:mb-2">
-                            Availability Status
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300">Availability Status</label>
                         <div className="flex items-center gap-4">
                             <button
                                 type="button"
@@ -229,7 +218,7 @@ const AdminAddBooks = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-blue-600 to-purple-400 text-white py-2 sm:py-3 px-4 rounded-md hover:opacity-90 transition duration-300 disabled:opacity-50 text-sm sm:text-base"
+                        className="w-full bg-gradient-to-r from-blue-600 to-purple-400 text-white py-2 px-4 rounded-md hover:opacity-90 transition duration-300 disabled:opacity-50"
                     >
                         {loading ? 'Adding Book...' : 'Add Book'}
                     </button>

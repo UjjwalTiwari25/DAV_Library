@@ -1,107 +1,67 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useSelector } from 'react-redux';
-import { toast } from 'react-hot-toast';
-import Loader from "../Loader/Loader";
-import { Heart } from "lucide-react";
+import Loader from "../Loader/Loader"; // Corrected import path
+import { Heart } from "lucide-react"; // Import the Heart icon from lucide-react
 
 const ViewBookDescription = () => {
-  const { id } = useParams();
-  const [book, setBook] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const isLoggedIn = useSelector((state) => state.auth.isLoogedIn);
-  const userId = useSelector((state) => state.auth.userId);
-  const token = localStorage.getItem("token");
+  const { id } = useParams(); // Get the book ID from the URL
+  const [book, setBook] = useState(null); // State to store book details
+  const [loading, setLoading] = useState(true); // State to track loading status
+  const [isFavorite, setIsFavorite] = useState(false); // State to track favorite status
 
-  // Separate fetch for book details and favorite status
   useEffect(() => {
-    const fetchBookDetails = async () => {
+    const fetchBook = async () => {
       try {
         const response = await axios.get(
           `http://localhost:3000/api/v1/get-book-by-id/${id}`
         );
-        setBook(response.data.data);
+        setBook(response.data.data); // Store fetched book details in state
+        
+        // Check if the book is in favorites
+        checkFavoriteStatus(response.data.data._id);
       } catch (error) {
         console.error("Error fetching book details:", error);
-        toast.error("Error loading book details");
-      }
-    };
-
-    const checkFavoriteStatus = async () => {
-      try {
-        const response = await axios.get(
-          'http://localhost:3000/api/v1/get-my-favourite-books',
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'id': userId
-            }
-          }
-        );
-        const favBooks = response.data.data || [];
-        setIsFavorite(favBooks.some(favBook => favBook._id === id));
-      } catch (error) {
-        console.error("Error checking favorite status:", error);
-      }
-    };
-
-    const loadData = async () => {
-      try {
-        await fetchBookDetails();
-        if (isLoggedIn && userId && token) {
-          await checkFavoriteStatus();
-        }
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading to false after fetching
       }
     };
+    fetchBook();
+  }, [id]);
 
-    loadData();
-  }, [id, isLoggedIn, userId, token]);
+  // Function to check if book is in favorites
+  const checkFavoriteStatus = (bookId) => {
+    // Get favorites from localStorage
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    setIsFavorite(favorites.includes(bookId));
+  };
 
-  const toggleFavorite = async () => {
-    if (!isLoggedIn) {
-      toast.error("Please login to add favorites");
-      return;
+  // Function to toggle favorite status
+  const toggleFavorite = () => {
+    if (!book) return;
+
+    // Get current favorites from localStorage
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    
+    // Toggle favorite status
+    if (isFavorite) {
+      // Remove from favorites
+      const updatedFavorites = favorites.filter(favId => favId !== book._id);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    } else {
+      // Add to favorites
+      favorites.push(book._id);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
     }
-
-    try {
-      const endpoint = isFavorite 
-        ? "/remove-book-from-favourite"
-        : "/add-book-to-favourite";
-
-      const response = await axios.put(
-        `http://localhost:3000/api/v1${endpoint}`,
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'id': userId,
-            'bookid': id
-          }
-        }
-      );
-
-      if (response.data.status === "Success" || response.data.message) {
-        setIsFavorite(!isFavorite);
-        toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
-      }
-    } catch (error) {
-      console.error("Error updating favorites:", error);
-      if (error.response?.status === 401) {
-        toast.error("Please login again");
-      } else {
-        toast.error("Failed to update favorites");
-      }
-    }
+    
+    // Update state
+    setIsFavorite(!isFavorite);
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader />
+        <Loader /> {/* Show loader while fetching data */}
       </div>
     );
   }
@@ -157,25 +117,23 @@ const ViewBookDescription = () => {
             </p>
 
             {/* Add to Favorites Button */}
-            {isLoggedIn && (
-              <button
-                onClick={toggleFavorite}
-                className="flex items-center space-x-2 px-6 py-2 transition-all duration-300 rounded-full"
-                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-              >
-                <span className="text-lg sm:text-xl text-gray-300 font-medium">
-                  {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-                </span>
-                <Heart
-                  size={32}
-                  className={`transition-all duration-300 ${
-                    isFavorite
-                      ? "fill-red-500 text-red-500"
-                      : "text-gray-400 hover:text-red-400"
-                  }`}
-                />
-              </button>
-            )}
+            <button
+              onClick={toggleFavorite}
+              className="flex items-center space-x-2 px-6 py-2 transition-all duration-300 rounded-full"
+              aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <span className="text-lg sm:text-xl text-gray-300 font-medium">
+                {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              </span>
+              <Heart
+                size={32}
+                className={`transition-all duration-300 ${
+                  isFavorite
+                    ? "fill-red-500 text-red-500"
+                    : "text-gray-400 hover:text-red-400"
+                }`}
+              />
+            </button>
           </div>
         </div>
       </div>

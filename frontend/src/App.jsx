@@ -13,14 +13,14 @@ import ViewBookDescription from './components/ViewBooksDescription/ViewBookDescr
 import AdminProfile from './pages/AdminProfile';
 import AdminAddBooks from './pages/AdminAddBooks';
 import ManageBooks from './pages/ManageBooks';
-import { useSelector, useDispatch } from 'react-redux';
-import { loginRestore } from './redux/slices/authSlice';
+import { useSelector, useDispatch } from 'react-redux'; // Import useSelector
+import { authActions } from './store/auth';
 import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoogedIn);
   const role = useSelector((state) => state.auth.role);
+  const isLoggedIn = useSelector((state) => state.auth.isLoogedIn);
 
   useEffect(() => {
     if (
@@ -28,38 +28,43 @@ const App = () => {
       localStorage.getItem("token") &&
       localStorage.getItem("role")
     ) {
-      dispatch(loginRestore());
+      dispatch(authActions.login());
+      dispatch(authActions.changeRole(localStorage.getItem("role")));
     }
-  }, [dispatch]);
+  }, []);
 
   return (
     <>
       <div>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/all-books" element={<AllBooks />} />
-          <Route path="/login" element={<LogIn />} />
+          <Route exact path="/" element={<Home />} />
+          <Route path="/all-Books" element={<AllBooks />} />
+          <Route path="/favorite-books" element={<FavoriteBooks />} />
+          <Route path="/LogIn" element={<LogIn />} />
           <Route path="/SignUp" element={<SignUp />} />
           <Route path="/explore-now" element={<ExploreNow />} />
           <Route path="view-book-description/:id" element={<ViewBookDescription />} />
           
-          {/* Protected Routes */}
-          {isLoggedIn && (
-            <>
-              {role === 'admin' && (
-                <>
-                  <Route path="/profile" element={<AdminProfile />} />
-                  <Route path="/add-books" element={<AdminAddBooks />} />
-                  <Route path="/manage-books" element={<ManageBooks />} />
-                </>
-              )}
-              <Route path="/favorite-books" element={<FavoriteBooks />} />
-            </>
-          )}
-          
-          {/* 404 Route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Admin Routes */}
+          <Route 
+            path="/profile" 
+            element={
+              isLoggedIn && role === "admin" ? <AdminProfile /> : <Navigate to="/" />
+            } 
+          />
+          <Route 
+            path="/add-books" 
+            element={
+              isLoggedIn && role === "admin" ? <AdminAddBooks /> : <Navigate to="/" />
+            } 
+          />
+          <Route 
+            path="/manage-books" 
+            element={
+              isLoggedIn && role === "admin" ? <ManageBooks /> : <Navigate to="/" />
+            } 
+          />
         </Routes>
         <Footer />
       </div>
