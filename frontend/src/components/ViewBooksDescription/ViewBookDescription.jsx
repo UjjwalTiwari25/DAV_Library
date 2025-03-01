@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Loader from "../Loader/Loader"; // Corrected import path
-import { Heart } from "lucide-react"; // Import the Heart icon from lucide-react
+import Loader from "../Loader/Loader";
+import { Heart } from "lucide-react";
+import API_BASE_URL from "../../config/api";
 
 const ViewBookDescription = () => {
-  const { id } = useParams(); // Get the book ID from the URL
-  const [book, setBook] = useState(null); // State to store book details
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const [isFavorite, setIsFavorite] = useState(false); // State to track favorite status
+  const { id } = useParams();
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
         // Add cache-busting parameter to prevent caching
         const response = await axios.get(
-          `http://localhost:3000/api/v1/get-book-by-id/${id}?_t=${Date.now()}`
+          `${API_BASE_URL}/api/v1/get-book-by-id/${id}?_t=${Date.now()}`
         );
         setBook(response.data.data);
         
@@ -62,7 +63,7 @@ const ViewBookDescription = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader /> {/* Show loader while fetching data */}
+        <Loader />
       </div>
     );
   }
@@ -113,27 +114,23 @@ const ViewBookDescription = () => {
               )}
             </p>
 
-            <p className="text-lg sm:text-xl text-gray-300">
-              <span className="font-semibold">Added By:</span> {book.addedBy}
-            </p>
-
             {/* Add to Favorites Button */}
             <button
               onClick={toggleFavorite}
-              className="flex items-center space-x-2 px-6 py-2 transition-all duration-300 rounded-full"
+              className="flex items-center gap-3 px-6 py-3 bg-gray-800/50 hover:bg-gray-700/50 rounded-lg transition-all duration-300 mt-4 border border-gray-700/50"
               aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
             >
-              <span className="text-lg sm:text-xl text-gray-300 font-medium">
-                {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-              </span>
               <Heart
-                size={32}
+                size={24}
                 className={`transition-all duration-300 ${
                   isFavorite
                     ? "fill-red-500 text-red-500"
                     : "text-gray-400 hover:text-red-400"
                 }`}
               />
+              <span className="text-lg text-white font-medium">
+                {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              </span>
             </button>
           </div>
         </div>

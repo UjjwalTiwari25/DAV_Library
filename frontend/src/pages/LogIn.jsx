@@ -4,6 +4,7 @@ import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import { authActions } from '../store/auth';
 import { useDispatch } from 'react-redux';
+import API_BASE_URL from '../config/api';
 
 const LogIn = () => {
     const navigate = useNavigate();
@@ -31,7 +32,7 @@ const LogIn = () => {
 
         try {
             setLoading(true);
-            const response = await axios.post('http://localhost:3000/api/v1/sign-in', formData);
+            const response = await axios.post(`${API_BASE_URL}/api/v1/sign-in`, formData);
 
             if (response.data.token) {
                 localStorage.setItem("id", response.data.id);

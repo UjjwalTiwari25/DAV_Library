@@ -30,6 +30,9 @@ const Footer = () => {
                     users: userCount,
                     error: null
                 });
+                
+                // When you're ready to use the real API:
+                // const response = await axios.get('https://davispatlibrary-s0pe.onrender.com/api/v1/stats');
             } catch (error) {
                 console.error('Error fetching stats:', error);
             } finally {

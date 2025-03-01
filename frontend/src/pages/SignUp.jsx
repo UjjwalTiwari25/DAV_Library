@@ -51,7 +51,7 @@ const SignUp = () => {
 
         try {
             setLoading(true);
-            const response = await axios.post('http://localhost:3000/api/v1/sign-up', formData); // CORRECTED URL
+            const response = await axios.post("https://davispatlibrary-s0pe.onrender.com/api/v1/sign-up", formData);
 
             if (response.data.success) {
                 navigate('/login');

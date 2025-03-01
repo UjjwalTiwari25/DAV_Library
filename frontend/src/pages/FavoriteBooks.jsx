@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
 import axios from "axios";
+import API_BASE_URL from "../config/api";
 
 const FavoriteBooks = () => {
   const [favorites, setFavorites] = useState([]);
@@ -18,6 +19,23 @@ const FavoriteBooks = () => {
     const updatedFavorites = favorites.filter((id) => id !== bookId);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
     setFavorites(updatedFavorites);
+  };
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        'https://davispatlibrary-s0pe.onrender.com/api/v1/get-favourite-books',
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      // rest of the function remains the same
+    } catch (error) {
+      // error handling
+    }
   };
 
   return (
@@ -37,12 +55,23 @@ const FavoriteBooks = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
                 {favorites.map((bookId) => (
                   <div key={bookId} className="w-full">
-                    <BookCard bookId={bookId} removeFromFavorites={removeFromFavorites} />
+                    <BookCard 
+                      bookId={bookId} 
+                      removeFromFavorites={removeFromFavorites} 
+                    />
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-400 text-center">No favorite books available</p>
+              <div className="text-center py-10">
+                <p className="text-gray-400 mb-4">You don't have any favorite books yet.</p>
+                <Link 
+                  to="/all-books" 
+                  className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white hover:opacity-90 transition-all duration-300"
+                >
+                  Browse Books
+                </Link>
+              </div>
             )}
           </>
         )}
@@ -54,6 +83,7 @@ const FavoriteBooks = () => {
 const BookCard = ({ bookId, removeFromFavorites }) => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
 
   useEffect(() => {
@@ -62,11 +92,13 @@ const BookCard = ({ bookId, removeFromFavorites }) => {
       try {
         // Add cache-busting parameter to prevent caching
         const response = await axios.get(
-          `http://localhost:3000/api/v1/get-book-by-id/${bookId}?_t=${Date.now()}`
+          `${API_BASE_URL}/api/v1/get-book-by-id/${bookId}?_t=${Date.now()}`
         );
         setBook(response.data.data);
+        setError(false);
       } catch (error) {
         console.error("Error fetching book details:", error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -74,17 +106,45 @@ const BookCard = ({ bookId, removeFromFavorites }) => {
     fetchBookDetails();
   }, [bookId, lastRefresh]);
 
-  // Set up an interval to refresh data every minute
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setLastRefresh(Date.now());
-    }, 60000); // 1 minute
+  // Display loading skeleton while loading
+  if (loading) {
+    return (
+      <div className="relative group w-full h-full">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/30 to-purple-600/30 rounded-2xl blur opacity-30"></div>
+        <div className="relative bg-gray-800/80 rounded-2xl p-2 sm:p-3 border border-gray-700/50 h-full flex flex-col animate-pulse">
+          <div className="flex-grow flex items-center justify-center">
+            <div className="w-full aspect-[2/3] bg-gray-700/50 rounded-lg"></div>
+          </div>
+          <div className="mt-2 text-center space-y-2">
+            <div className="h-4 bg-gray-700/50 rounded-full w-3/4 mx-auto"></div>
+            <div className="h-3 bg-gray-700/50 rounded-full w-1/2 mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-    return () => clearInterval(intervalId);
-  }, []);
-
-  if (loading) return <div className="h-full w-full bg-gray-800/50 rounded-2xl animate-pulse"></div>;
-  if (!book) return null;
+  // Display error state if book failed to load
+  if (error || !book) {
+    return (
+      <div className="relative group w-full h-full">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500/30 to-orange-600/30 rounded-2xl blur opacity-30"></div>
+        <div className="relative bg-gray-800/80 rounded-2xl p-2 sm:p-3 border border-gray-700/50 h-full flex flex-col">
+          <div className="flex-grow flex items-center justify-center">
+            <div className="text-center p-4">
+              <p className="text-red-400 text-sm">Book unavailable</p>
+            </div>
+          </div>
+          <button
+            onClick={() => removeFromFavorites(bookId)}
+            className="mt-2 p-1 text-center text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded-lg transition-colors duration-200 text-xs"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative group w-full h-full">

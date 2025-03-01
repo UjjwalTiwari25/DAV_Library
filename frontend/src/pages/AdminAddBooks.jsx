@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const AdminAddBooks = () => {
     const navigate = useNavigate();
@@ -53,7 +54,7 @@ const AdminAddBooks = () => {
         try {
             const token = localStorage.getItem('token');
             const response = await axios.post(
-                'http://localhost:3000/api/v1/add-book',
+                `${API_BASE_URL}/api/v1/add-book`,
                 bookData,
                 {
                     headers: {

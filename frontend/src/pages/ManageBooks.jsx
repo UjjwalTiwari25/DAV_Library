@@ -22,8 +22,9 @@ const ManageBooks = () => {
     });
 
     const fetchBooks = async () => {
+        setLoading(true);
         try {
-            const response = await axios.get('http://localhost:3000/api/v1/get-all-books');
+            const response = await axios.get('https://davispatlibrary-s0pe.onrender.com/api/v1/get-all-books');
             setBooks(response.data.data);
         } catch (error) {
             toast.error('Failed to fetch books');
@@ -45,7 +46,7 @@ const ManageBooks = () => {
 
             // Make API call with only the required field
             const response = await axios.put(
-                `http://localhost:3000/api/v1/update-book/${bookId}`,
+                `https://davispatlibrary-s0pe.onrender.com/api/v1/update-book/${bookId}`,
                 { available: newStatus },
                 getAuthHeader()
             );
@@ -72,7 +73,7 @@ const ManageBooks = () => {
         if (window.confirm('Are you sure you want to delete this book?')) {
             try {
                 await axios.delete(
-                    `http://localhost:3000/api/v1/delete-book/${bookId}`,
+                    `https://davispatlibrary-s0pe.onrender.com/api/v1/delete-book/${bookId}`,
                     getAuthHeader()
                 );
                 setBooks(books.filter(book => book._id !== bookId));

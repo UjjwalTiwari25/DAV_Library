@@ -13,7 +13,7 @@ const RecentlyAdded = () => {
     try {
       // Add cache-busting parameter to prevent caching
       const response = await axios.get(
-        `http://localhost:3000/api/v1/get-recent-books?_t=${Date.now()}`
+        `https://davispatlibrary-s0pe.onrender.com/api/v1/get-recent-books?_t=${Date.now()}`
       );
       setData(response.data.data);
     } catch (error) {

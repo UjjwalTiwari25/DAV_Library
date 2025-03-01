@@ -32,8 +32,8 @@ const AllBooks = () => {
     try {
       // Add category as query parameter if it's not "All Books"
       const url = category && category !== "All Books" 
-        ? `http://localhost:3000/api/v1/get-all-books?category=${encodeURIComponent(category)}`
-        : "http://localhost:3000/api/v1/get-all-books";
+        ? `https://davispatlibrary-s0pe.onrender.com/api/v1/get-all-books?category=${encodeURIComponent(category)}`
+        : "https://davispatlibrary-s0pe.onrender.com/api/v1/get-all-books";
       
       // Add cache-busting parameter to prevent caching
       const response = await axios.get(`${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`);
