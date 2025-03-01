@@ -13,17 +13,18 @@ const ViewBookDescription = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
+        // Add cache-busting parameter to prevent caching
         const response = await axios.get(
-          `http://localhost:3000/api/v1/get-book-by-id/${id}`
+          `http://localhost:3000/api/v1/get-book-by-id/${id}?_t=${Date.now()}`
         );
-        setBook(response.data.data); // Store fetched book details in state
+        setBook(response.data.data);
         
         // Check if the book is in favorites
         checkFavoriteStatus(response.data.data._id);
       } catch (error) {
         console.error("Error fetching book details:", error);
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
     fetchBook();

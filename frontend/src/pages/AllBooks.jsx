@@ -5,14 +5,38 @@ import BookCard from '../components/BookCard/BookCard'
 import { toast } from "react-hot-toast";
 
 const AllBooks = () => {
-  const [data, setData] = useState([]); // State to store book data
-  const [loading, setLoading] = useState(true); // State to track loading status
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [lastRefresh, setLastRefresh] = useState(Date.now());
 
-  const fetchData = async () => {
+  // Define categories array - same as in AdminAddBooks
+  const categories = [
+    "All Books",
+    "Class 9",
+    "Class 10",
+    "Class 11",
+    "Class 12",
+    "Maths",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Encyclopedia",
+    "Reference Book",
+    "Dictionary",
+    "Others"
+  ];
+
+  const fetchData = async (category = "") => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/v1/get-all-books"
-      );
+      // Add category as query parameter if it's not "All Books"
+      const url = category && category !== "All Books" 
+        ? `http://localhost:3000/api/v1/get-all-books?category=${encodeURIComponent(category)}`
+        : "http://localhost:3000/api/v1/get-all-books";
+      
+      // Add cache-busting parameter to prevent caching
+      const response = await axios.get(`${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`);
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -22,47 +46,98 @@ const AllBooks = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []); // This will fetch once when component mounts
-
-  // Add a function to refresh data
-  const refreshData = () => {
-    setLoading(true);
-    fetchData();
+  // Handle category selection
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    fetchData(category === "All Books" ? "" : category);
   };
 
+  // Refresh data when component mounts or lastRefresh changes
+  useEffect(() => {
+    fetchData(selectedCategory === "All Books" ? "" : selectedCategory);
+  }, [lastRefresh, selectedCategory]);
+
+  // Add a manual refresh function
+  const refreshData = () => {
+    setLastRefresh(Date.now());
+  };
+
+  // Set up an interval to refresh data every minute
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refreshData();
+    }, 60000); // 1 minute
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
-    <div className="min-h-4 flex flex-col md:flex-row items-center justify-center px-6 md:px-12 py-10 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white">
-    <div className="mt-8 px-4">
-      <h4 className="text-xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight">
-        All Books
-      </h4>
-      <div className="my-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-8 md:gap-24">
-        {/* Display loader while fetching data */}
+    <div className="min-h-screen flex flex-col items-center justify-start px-4 py-10 pt-20 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white">
+      <div className="w-full max-w-7xl">
+        <div className="flex justify-between items-center mb-6">
+          <h4 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight">
+            All Books
+          </h4>
+          <button 
+            onClick={refreshData}
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-blue-400 transition-all duration-300"
+            title="Refresh books"
+          >
+            ↻
+          </button>
+        </div>
+        
+        {/* Category Filter */}
+        <div className="mb-6 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex space-x-2 min-w-max">
+            {categories.map((category, index) => (
+              <button
+                key={index}
+                onClick={() => handleCategorySelect(category)}
+                className={`px-4 py-2 rounded-full whitespace-nowrap transition-all duration-300 text-sm ${
+                  selectedCategory === category
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-400 text-white font-medium'
+                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+        
         {loading ? (
           <div className="flex items-center justify-center my-8">
             <Loader />
           </div>
         ) : (
           <>
-            {/* Display books if data is available */}
             {data.length > 0 ? (
-              data.map((book, i) => (
-                <div key={i}>
-                  <BookCard data={book} />
-                </div>
-              ))
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
+                {data.map((book, i) => (
+                  <div key={i} className="w-full">
+                    <BookCard data={book} />
+                  </div>
+                ))}
+              </div>
             ) : (
-              <p className="text-gray-400">No books available</p>
+              <div className="text-center py-10">
+                <p className="text-gray-400 mb-2">No books available in this category</p>
+                {selectedCategory !== "" && selectedCategory !== "All Books" && (
+                  <button 
+                    onClick={() => handleCategorySelect("All Books")}
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-blue-400 transition-all duration-300"
+                  >
+                    View All Books
+                  </button>
+                )}
+              </div>
             )}
           </>
         )}
       </div>
     </div>
-  </div>
+  );
+};
 
-  )
-}
-
-export default AllBooks
+export default AllBooks;
