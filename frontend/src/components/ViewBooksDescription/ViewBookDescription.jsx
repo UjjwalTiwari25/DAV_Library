@@ -1,33 +1,107 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import Loader from "../Loader/Loader"; // Corrected import path
+import { useSelector } from 'react-redux';
+import { toast } from 'react-hot-toast';
+import Loader from "../Loader/Loader";
+import { Heart } from "lucide-react";
 
 const ViewBookDescription = () => {
-  const { id } = useParams(); // Get the book ID from the URL
-  const [book, setBook] = useState(null); // State to store book details
-  const [loading, setLoading] = useState(true); // State to track loading status
+  const { id } = useParams();
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const isLoggedIn = useSelector((state) => state.auth.isLoogedIn);
+  const userId = useSelector((state) => state.auth.userId);
+  const token = localStorage.getItem("token");
 
+  // Separate fetch for book details and favorite status
   useEffect(() => {
-    const fetchBook = async () => {
+    const fetchBookDetails = async () => {
       try {
         const response = await axios.get(
           `http://localhost:3000/api/v1/get-book-by-id/${id}`
         );
-        setBook(response.data.data); // Store fetched book details in state
+        setBook(response.data.data);
       } catch (error) {
         console.error("Error fetching book details:", error);
-      } finally {
-        setLoading(false); // Set loading to false after fetching
+        toast.error("Error loading book details");
       }
     };
-    fetchBook();
-  }, [id]);
+
+    const checkFavoriteStatus = async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost:3000/api/v1/get-my-favourite-books',
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'id': userId
+            }
+          }
+        );
+        const favBooks = response.data.data || [];
+        setIsFavorite(favBooks.some(favBook => favBook._id === id));
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+      }
+    };
+
+    const loadData = async () => {
+      try {
+        await fetchBookDetails();
+        if (isLoggedIn && userId && token) {
+          await checkFavoriteStatus();
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [id, isLoggedIn, userId, token]);
+
+  const toggleFavorite = async () => {
+    if (!isLoggedIn) {
+      toast.error("Please login to add favorites");
+      return;
+    }
+
+    try {
+      const endpoint = isFavorite 
+        ? "/remove-book-from-favourite"
+        : "/add-book-to-favourite";
+
+      const response = await axios.put(
+        `http://localhost:3000/api/v1${endpoint}`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'id': userId,
+            'bookid': id
+          }
+        }
+      );
+
+      if (response.data.status === "Success" || response.data.message) {
+        setIsFavorite(!isFavorite);
+        toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+      }
+    } catch (error) {
+      console.error("Error updating favorites:", error);
+      if (error.response?.status === 401) {
+        toast.error("Please login again");
+      } else {
+        toast.error("Failed to update favorites");
+      }
+    }
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader /> {/* Show loader while fetching data */}
+        <Loader />
       </div>
     );
   }
@@ -43,9 +117,11 @@ const ViewBookDescription = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 md:px-12 py-10 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white">
       <div className="mt-8 px-4 w-full max-w-4xl">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight">
-          {book.title}
-        </h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight">
+            {book.title}
+          </h1>
+        </div>
         <p className="text-sm sm:text-md text-gray-400 mt-2">by {book.author}</p>
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -75,9 +151,31 @@ const ViewBookDescription = () => {
                 <span className="text-red-400">Unavailable</span>
               )}
             </p>
+
             <p className="text-lg sm:text-xl text-gray-300">
               <span className="font-semibold">Added By:</span> {book.addedBy}
             </p>
+
+            {/* Add to Favorites Button */}
+            {isLoggedIn && (
+              <button
+                onClick={toggleFavorite}
+                className="flex items-center space-x-2 px-6 py-2 transition-all duration-300 rounded-full"
+                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <span className="text-lg sm:text-xl text-gray-300 font-medium">
+                  {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+                </span>
+                <Heart
+                  size={32}
+                  className={`transition-all duration-300 ${
+                    isFavorite
+                      ? "fill-red-500 text-red-500"
+                      : "text-gray-400 hover:text-red-400"
+                  }`}
+                />
+              </button>
+            )}
           </div>
         </div>
       </div>

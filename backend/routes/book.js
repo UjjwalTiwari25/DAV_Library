@@ -63,69 +63,44 @@ router.post("/add-book", authenticateToken, async (req, res) => {
 // Update Book Route
 router.put("/update-book/:id", authenticateToken, async (req, res) => {
     try {
-        // Ensure req.user exists
-        if (!req.user) {
-            console.warn("❌ Unauthorized access attempt.");
-            return res.status(401).json({ 
-                status: "Error",
-                message: "Unauthorized. Please log in." 
-            });
-        }
-
         const { id } = req.params;
-        const { url, title, author, category, language, available } = req.body;
+        const { available } = req.body;
         const user = req.user;
-
-        console.log(`🔹 User ${user.username} (Role: ${user.role}) is attempting to update book ID: ${id}`);
 
         // Only admins can update books
         if (user.role !== "admin") {
-            console.warn("❌ Access denied for non-admin user.");
             return res.status(403).json({
                 status: "Error",
-                message: "Access denied. Admins only.",
-                userRole: user.role
-            });
-        }
-
-        // Validate input: At least one field must be provided for update
-        if (!url && !title && !author && !category && !language && !available) {
-            console.warn("⚠️ No fields provided for update.");
-            return res.status(400).json({
-                status: "Error",
-                message: "At least one field must be updated.",
-                received: req.body
+                message: "Access denied. Admins only."
             });
         }
 
         // Find and update the book
         const updatedBook = await Book.findByIdAndUpdate(
             id,
-            { $set: { url, title, author, category, language, available } },
-            { new: true, runValidators: true }
+            { available },
+            { new: true }
         );
 
         if (!updatedBook) {
-            console.warn("❌ Book not found for ID:", id);
             return res.status(404).json({ 
                 status: "Error",
                 message: "Book not found." 
             });
         }
 
-        console.log("✅ Book updated successfully:", updatedBook);
         res.status(200).json({
             status: "Success",
             message: "Book updated successfully",
-            updatedBook
+            data: updatedBook
         });
 
     } catch (error) {
-        console.error("❌ Error updating book:", error);
-        res.status(500).json({
+        console.error("Error updating book:", error);
+        res.status(500).json({ 
             status: "Error",
-            message: "Internal server error",
-            error: error.message
+            message: "Internal server error", 
+            error: error.message 
         });
     }
 });
@@ -196,6 +171,39 @@ router.get("/get-all-books", async (req, res) => {
         res.status(500).json({ 
             status: "Error",
             message: "Error fetching books", 
+            error: error.message 
+        });
+    }
+});
+
+// Get books count (Admin only)
+router.get("/get-books-count", authenticateToken, async (req, res) => {
+    try {
+        console.log('Fetching books count...');
+        const user = req.user;
+
+        // Check if user is admin
+        if (!user || user.role !== "admin") {
+            return res.status(403).json({
+                status: "Error",
+                message: "Access denied. Admins only."
+            });
+        }
+
+        const totalBooks = await Book.countDocuments();
+        console.log('Total books found:', totalBooks);
+        
+        return res.status(200).json({
+            status: "Success",
+            data: {
+                totalBooks
+            }
+        });
+    } catch (error) {
+        console.error("Error in get-books-count:", error);
+        res.status(500).json({ 
+            status: "Error",
+            message: "Error fetching books count", 
             error: error.message 
         });
     }
