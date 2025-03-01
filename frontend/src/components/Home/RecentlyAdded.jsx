@@ -38,7 +38,7 @@ const RecentlyAdded = () => {
         <h4 className="text-xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 drop-shadow-lg leading-tight">
           Recently Added Books
         </h4>
-        <div className="my-4 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-24">
+        <div className="my-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-8 md:gap-24">
           {/* Display loader while fetching data */}
           {loading ? (
             <div className="flex items-center justify-center my-8">
